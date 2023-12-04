@@ -1,3 +1,4 @@
+iphone = true;
 enyo.kind({
 	name: "SmipApp",
 	kind: enyo.VFlexBox,
@@ -10,16 +11,19 @@ enyo.kind({
 	chartWindowSamples: 10,
 	lastAttribId: false,
 	lastAttribType: null,
+	lastChartName: "",
+	lastChartSamples: [],
+	lastChartLabels: [],
 	components: [
 		{kind: "ApplicationEvents", onLoad: "connectToSmip" },
 		{ kind: "PageHeader", components: [
 			{ kind: "Image", name: "titleIcon", src: "icon.png", flex:1, style:"width:24px; margin-right: 8px" },
-			{ name: "titleText", content: "Hello", style:"margin-top:1px;", flex:1,  },
+			{ name: "titleText", content: "Hello", style:"margin-top:1px;", flex:1 },
 			{ kind: "Spinner"},
 			{ kind: "Button", caption: "Start Over", align:"right", onclick: "btnStartOver",  }
 		]},
-		{name: "slidingPane", kind: "SlidingPane", flex: 1, multiView: true, components: [
-			{name: "paneEquipment", width: "300px", components: [
+		{name: "slidingPane", kind: "SlidingPane", flex: 1, multiView: true, multiViewMinWidth: 500, onSlideComplete: "refreshPane", components: [
+			{name: "paneEquipment", minWidth:"400px", components: [
 				{kind: "Scroller", name:"equipmentList", flex: 1, components: [
 					{name: "list", kind: "VirtualRepeater", onSetupRow: "getListItem",
 						components: [
@@ -30,21 +34,21 @@ enyo.kind({
 						]
 					}
 				]},
-				{kind: "VFlexBox", className:"enyo-toolbar-light", components: [
-					{ flex: 1},
+				{kind: "VFlexBox", className:"enyo-toolbar-light", style:"height:52px", components: [
+					{ flex: 1 },
 					{ kind: "HFlexBox", components: [
-						{ flex: 1},
+						{ flex: 1 },
 						{ kind: "Button", caption: "Go Back", name:"btnBack", onclick: "btnBack", disabled: true },
-						{ flex: 1},
+						{ flex: 1 },
 					]},
-					{ flex: 1},
+					{ flex: 1 },
 				]}
 			]},
-			{name: "paneChart", flex: 1, onResize: "slidingResize", components: [
-				{kind: "HtmlContent", flex:1, srcId: "myChartDiv"},
+			{name: "paneChart", flex: 1, minWidth: "380px", components: [
+				{ kind: "HtmlContent", flex:1, style: "padding-right: 10px", srcId: "myChartDiv"},
 				{ className:"enyo-toolbar-light", components: [
 					{ name: "Grabber", className:"enyo-retrofit-grabbutton" },
-					{ name: "Filler", flex: 1}
+					{ name: "Filler", flex: 1 }
 				]}
 			]}
 		]},
@@ -124,15 +128,15 @@ enyo.kind({
 	btnSaveLogin: function() {
 		if (this.$.instanceGraphQLEndpoint.getValue()) {
 			Smip.instanceGraphQLEndpoint = this.$.instanceGraphQLEndpoint.getValue();
-			Prefs.setCookie("instanceGraphQLEndpoint", Smip.instanceGraphQLEndpoint);	
+			Prefs.setCookie("instanceGraphQLEndpoint", Smip.instanceGraphQLEndpoint);
 		}
 		if (this.$.clientId.getValue()) {
 			Smip.clientId = this.$.clientId.getValue();
-			Prefs.setCookie("clientId", Smip.clientId);	
+			Prefs.setCookie("clientId", Smip.clientId);
 		}
 		if (this.$.userName.getValue()) {
 			Smip.userName = this.$.userName.getValue();
-			Prefs.setCookie("userName", Smip.userName);	
+			Prefs.setCookie("userName", Smip.userName);
 		}
 		if (this.$.clientSecret.getValue()) {
 			Smip.clientSecret = this.$.clientSecret.getValue();
@@ -140,7 +144,7 @@ enyo.kind({
 		}
 		if (this.$.role.getValue()) {
 			Smip.role = this.$.role.getValue();
-			Prefs.setCookie("role", Smip.role);	
+			Prefs.setCookie("role", Smip.role);
 		}
 		Prefs.setCookie("parentId", this.$.parentId.getValue());
 		if (this.$.parentId.getValue())
@@ -203,8 +207,6 @@ enyo.kind({
 			this.lastAttribType = itemType;
 			this.chartName = item.displayName;
 			this.getSamples(item.id, itemType);
-			if(document.documentElement.clientWidth < 600)
-				this.$.slidingPane.selectViewByName("paneChart");
 		}
 		else {
 			this.lastAttribId = false;
@@ -212,10 +214,9 @@ enyo.kind({
 			this.getAttributes(item.id);
 		}
 	},
-	slidingResize: function() {
-		if(document.documentElement.clientWidth >= 600 && this.lastAttribId) {
-			//On bigger screens, re-render the chart when the panel is resized
-			this.getSamples(this.lastAttribId, this.lastAttribType);
+	refreshPane: function() {
+		if (this.$.slidingPane.getViewName() == "paneChart" && this.lastAttribId) {
+			this.renderChart(this.lastChartName, this.lastChartSamples, this.lastChartLabels, true);
 		}
 	},
 	getEquipmentList: function() {
@@ -254,7 +255,7 @@ enyo.kind({
 		var smpResponse = JSON.parse(smpResponse);
 		var historyValues = smpResponse.data.getRawHistoryDataWithSampling;
 		var newChartName;
-		
+
 		//Get the most recent value to put in the list
 		var lastSample = historyValues[historyValues.length-1];
 		var updateId = lastSample.id;
@@ -300,11 +301,32 @@ enyo.kind({
 			if (sampleCount >= this.chartWindowSamples)
 				i=0;
 		}
-		this.renderChart(newChartName, samples.reverse(), labels.reverse());
+		this.lastChartName = newChartName;
+		this.lastChartSamples = samples.reverse();
+		this.lastChartLabels = labels.reverse();
+		if(document.documentElement.clientWidth <= 500) {
+            this.$.slidingPane.selectViewByName("paneChart");
+        } else {
+            this.renderChart(this.lastChartName, this.lastChartSamples, this.lastChartLabels, false);
+        }
 		this.$.spinner.hide();
 	},
-	renderChart: function(displayName, samples, labels) {
+	renderChart: function(displayName, samples, labels, disableAnimations) {
 		var ctx = document.getElementById("myChart").getContext('2d');
+		var options = {
+			scales: {
+				yAxes: [{
+					ticks: {
+						beginAtZero:true
+					}
+				}]
+			},
+			maintainAspectRatio: false
+		};
+		if (disableAnimations) {
+			options.animation = { duration: 0 };
+			options.responsiveAnimationDuration = 0;
+		}
 		var myChart = new Chart(ctx, {
 			type: 'line',
 			data: {
@@ -316,16 +338,7 @@ enyo.kind({
 					borderWidth: 2
 				}]
 			},
-			options: {
-				scales: {
-					yAxes: [{
-						ticks: {
-							beginAtZero:true
-						}
-					}]
-				},
-				maintainAspectRatio: false
-			}
+			options: options
 		});
 	},
 });

@@ -9,6 +9,10 @@ html, body, div, span {
 .enyo-retrofit-grabbutton {
     width: 46px;
     height: 46px;
-    background-image: url(../.enyo/build/palm/themes/Onyx/images/grabbutton.png);
+    background-image: url(../enyo/build/palm/themes/Onyx/images/grabbutton.png);
     background-size: 46px 54px;
+}
+.enyo-pane-behind {
+    display:none;
+    visibility: hidden;
 }
