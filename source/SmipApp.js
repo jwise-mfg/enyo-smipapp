@@ -44,8 +44,8 @@ enyo.kind({
 					{ flex: 1 },
 				]}
 			]},
-			{name: "paneChart", flex: 1, minWidth: "380px", components: [
-				{ kind: "HtmlContent", flex:1, style: "padding-right: 10px", srcId: "myChartDiv"},
+			{name: "paneChart", flex: 1, minWidth: "400px", components: [
+				{ kind: "HtmlContent", flex:1, style: "padding-left:20px; padding-right: 30px", srcId: "myChartDiv"},
 				{ className:"enyo-toolbar-light", components: [
 					{ name: "Grabber", className:"enyo-retrofit-grabbutton" },
 					{ name: "Filler", flex: 1 }
