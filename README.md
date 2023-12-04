@@ -4,7 +4,7 @@ A simple web application for the SMIP using only Javascript XHR and the Enyo fra
 
 This example is intended to work on the widest possible range of web-enabled devices, and as such makes use of some older, more compatible technologies. For examples of SMIP API access using the latest technologies, please see the [CESMII API GitHub Repo](https://github.com/cesmii/API).
 
-Requires [Enyo 1.0](https://github.com/enyojs/enyo-1.0) on the host.
+Requires [Enyo 1.0](https://github.com/webOS-ports/enyo-1.0) on the host.
 
 Install in a subfolder called `.enyo`.
 

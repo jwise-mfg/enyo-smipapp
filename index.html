@@ -20,13 +20,6 @@
 	<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
 	<link rel="icon" type="image/png" sizes="96x96" href="icons/favicon-96x96.png">
 	<script>
-	function tryLocalEnyo() {
-		var js = document.createElement("script");
-        js.type = "text/javascript";
-        js.src = "/usr/palm/frameworks/enyo/0.10/framework/enyo.js";
-        js.onerror = missingFramework;
-        document.head.appendChild(js);
-	}
 	function missingFramework() {
 		try {
 			enyo.log("Checking environment for Enyo framework.");
@@ -36,8 +29,7 @@
 		}
 	}
 	</script>
-	
-	<script src="/usr/palm/frameworks/enyo/0.10/framework/enyo.js" type="text/javascript" onerror="tryLocalEnyo()"></script>
+	<script src=".enyo/enyo.js" type="text/javascript" onerror="missingFramework()"></script>
 	<script src="Chart.min.js"></script>
 	<script>
 		//Register service worker (stub)
@@ -81,23 +73,18 @@
 			}
 		};
 
-		document.addEventListener("touchstart", onTouchStart, { passive: false });
-		document.addEventListener("touchmove", onTouchMove, { passive: false });
-
-		//Stop double-firing click events (Android and iOS)
+		//Stop double-firing click events on (caused by Chrome: https://developer.chrome.com/blog/scrolling-intervention/)
 		var lastClick = 0;
 		function checkClickFilter(e) {
-			//if (navigator.userAgent.toLowerCase().indexOf("android") != -1) {
 				var timeStamp = Date.now()
-				var elapsed = timeStamp - lastClick;
-				lastClick = timeStamp;
-				if ((elapsed && elapsed > 5 && elapsed < 300)) {
-					//console.log("reject click! elapsed: " + elapsed);
-					return false;
-				} else {
-					//console.log("allow click! elapsed: " + elapsed);
-				}
-			//}
+			var elapsed = timeStamp - lastClick;
+			lastClick = timeStamp;
+			if ((elapsed && elapsed > 5 && elapsed < 300)) {
+				//console.log("reject click! elapsed: " + elapsed);
+				return false;
+			} else {
+				//console.log("allow click! elapsed: " + elapsed);
+			}
 			return true;
 		}
 	</script>
