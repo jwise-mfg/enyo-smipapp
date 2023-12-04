@@ -1,0 +1,113 @@
+<!doctype html>
+<html>
+<head>
+	<title>SMIP App</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+	<meta http-equiv="pragma" content="no-cache">
+	<link rel="shortcut icon" href="./favicon.ico">
+	<link rel="manifest" href="./manifest.json">
+	<link rel="apple-touch-icon" sizes="57x57" href="apple-icon/57x57.png">
+	<link rel="apple-touch-icon" sizes="60x60" href="apple-icon/60x60.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="apple-icon/72x72.png">
+	<link rel="apple-touch-icon" sizes="76x76" href="apple-icon/76x76.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="apple-icon/114x114.png">
+	<link rel="apple-touch-icon" sizes="120x120" href="apple-icon/120x120.png">
+	<link rel="apple-touch-icon" sizes="144x144" href="apple-icon/144x144.png">
+	<link rel="apple-touch-icon" sizes="152x152" href="apple-icon/152x152.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="apple-icon/180x180.png">
+	<link rel="icon" type="image/png" sizes="192x192" href="icons/android-icon-192x192.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="96x96" href="icons/favicon-96x96.png">
+	<script>
+	function tryLocalEnyo() {
+		var js = document.createElement("script");
+        js.type = "text/javascript";
+        js.src = "/usr/palm/frameworks/enyo/0.10/framework/enyo.js";
+        js.onerror = missingFramework;
+        document.head.appendChild(js);
+	}
+	function missingFramework() {
+		try {
+			enyo.log("Checking environment for Enyo framework.");
+		} catch (ex) {	
+			alert ("This web app depends on the Enyo 1.0 framework, which was not found. Install enyo in the .enyo sub-folder and retry.")
+			document.write("Unable to start application: enyo not installed.")
+		}
+	}
+	</script>
+	
+	<script src="/usr/palm/frameworks/enyo/0.10/framework/enyo.js" type="text/javascript" onerror="tryLocalEnyo()"></script>
+	<script src="Chart.min.js"></script>
+	<script>
+		//Register service worker (stub)
+		if ('serviceWorker' in navigator) {
+			window.addEventListener('load', function() {
+				navigator.serviceWorker.register('serviceworker.js').then(function(registration) {
+				// Registration was successful
+				console.log('ServiceWorker registration successful with scope: ', registration.scope);
+				}, function(err) {
+				// registration failed :(
+				console.log('ServiceWorker registration failed: ', err);
+				});
+			});
+		}
+
+		//Load enyo retrofits if not webOS
+		if (navigator.userAgent.toLowerCase().indexOf("webos") == -1 && navigator.userAgent.toLowerCase().indexOf("hpwos") == -1) {
+			var css = document.createElement("link");
+        	css.setAttribute("rel", "stylesheet");
+			css.setAttribute("href", "source/enyoRetrofit.css");
+			document.head.appendChild(css);
+		}
+
+		//Stop iOS bouncy overscroll
+		function onTouchStart(e) {
+			// Save position of touch
+			const touch = e.touches[0] || e.changedTouches[0];
+			window.lastY = touch.pageY;
+		}
+
+		function onTouchMove(e) {
+			// Check user isn't scrolling past content. If so, cancel move to prevent ios bouncing
+			const touch = e.touches[0] || e.changedTouches[0];
+			y = touch.pageY;
+			if (y < window.lastY && e.srcElement.scrollTop == (e.srcElement.scrollHeight - e.srcElement.clientHeight)) {
+				//console.log("user is trying to scroll down without anywhere to scroll to. Canceling propagation.");
+				e.preventDefault();
+			} else if (y > window.lastY && e.srcElement.scrollTop == 0) {
+				//console.log("user is trying to scroll up without anywhere to scroll to. Canceling propagation.");
+				e.preventDefault();
+			}
+		};
+
+		document.addEventListener("touchstart", onTouchStart, { passive: false });
+		document.addEventListener("touchmove", onTouchMove, { passive: false });
+
+		//Stop double-firing click events (Android and iOS)
+		var lastClick = 0;
+		function checkClickFilter(e) {
+			//if (navigator.userAgent.toLowerCase().indexOf("android") != -1) {
+				var timeStamp = Date.now()
+				var elapsed = timeStamp - lastClick;
+				lastClick = timeStamp;
+				if ((elapsed && elapsed > 5 && elapsed < 300)) {
+					//console.log("reject click! elapsed: " + elapsed);
+					return false;
+				} else {
+					//console.log("allow click! elapsed: " + elapsed);
+				}
+			//}
+			return true;
+		}
+	</script>
+</head>
+<body>
+<div id="myChartDiv">
+	<canvas id="myChart" style="border: 0px dotted cornflowerblue"></canvas>
+</div>
+<script type="text/javascript">
+	new SmipApp().renderInto(document.body);
+</script>
+</body>
+</html>

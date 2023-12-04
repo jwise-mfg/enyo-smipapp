@@ -1,0 +1,33 @@
+.enyo-modaldialog-content {
+    background-color: lightgray !important;
+    padding: 28px;
+    border-top: 1px solid dimgray;
+    border-left: 1px solid dimgray;
+    border-bottom: 1px solid black;
+    border-right: 1px solid black;
+    border-radius: 5px;
+}
+
+.enyo-input {
+    background-color: white;
+    border-radius: 5px;
+    margin-top: 5px;
+}
+
+.enyo-input-focus {
+    background-color: transparent;
+}
+
+.enyo-button {
+    background-color: lightgray;
+    border-top: 1px solid white;
+    border-left: 1px solid white;
+    border-bottom: 1px solid dimgray;
+    border-right: 1px solid dimgray;
+}
+.enyo-retrofit-grabbutton {
+    width: 46px;
+    height: 46px;
+    background-image: url(../.enyo/build/palm/themes/Onyx/images/grabbutton.png);
+    background-size: 46px 54px;
+}
