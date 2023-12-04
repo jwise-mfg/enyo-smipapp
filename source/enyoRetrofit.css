@@ -25,9 +25,12 @@
     border-bottom: 1px solid dimgray;
     border-right: 1px solid dimgray;
 }
+.enyo-toolbar-light {
+    min-height: 46px
+}
 .enyo-retrofit-grabbutton {
     width: 46px;
     height: 46px;
-    background-image: url(../.enyo/build/palm/themes/Onyx/images/grabbutton.png);
+    background-image: url(../enyo/build/palm/themes/Onyx/images/grabbutton.png);
     background-size: 46px 54px;
 }
