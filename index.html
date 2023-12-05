@@ -72,21 +72,6 @@
 				e.preventDefault();
 			}
 		};
-
-		//Stop double-firing click events on (caused by Chrome: https://developer.chrome.com/blog/scrolling-intervention/)
-		var lastClick = 0;
-		function checkClickFilter(e) {
-				var timeStamp = Date.now()
-			var elapsed = timeStamp - lastClick;
-			lastClick = timeStamp;
-			if ((elapsed && elapsed > 5 && elapsed < 300)) {
-				//console.log("reject click! elapsed: " + elapsed);
-				return false;
-			} else {
-				//console.log("allow click! elapsed: " + elapsed);
-			}
-			return true;
-		}
 	</script>
 </head>
 <body>
@@ -95,6 +80,10 @@
 </div>
 <script type="text/javascript">
 	new SmipApp().renderInto(document.body);
+	enyo.forEach(['touchstart', 'touchmove', 'touchend', 'gesturestart', 'gesturechange', 'gestureend'], function(e) {
+		// on iOS7 document.ongesturechange is never called
+		document.addEventListener(e, enyo.dispatch, {passive:false});
+	});
 </script>
 </body>
 </html>

@@ -158,15 +158,10 @@ enyo.kind({
 		this.getEquipmentList();
 	},
 	btnStartOver: function(inSender, inEvent) {
-		if (checkClickFilter(inEvent)) {	//on index.html, for backward android compatibility
-			enyo.log("Get button clicked!");
-			this.showLoginDialog();
-		}
+		this.showLoginDialog();
 	},
 	btnCancelLogin: function(inSender, inEvent) {
-		if (checkClickFilter(inEvent)) {	//on index.html, for backward android compatibility
-			this.$.modalLogin.close();
-		}
+		this.$.modalLogin.close();
 	},
 	showError: function(title, message) {
 		this.$.modalError.openAtCenter();
@@ -174,15 +169,11 @@ enyo.kind({
 		this.$.errorMessage.setContent(message);
 	},
 	btnErrorClose: function(inSender, inEvent) {
-		if (checkClickFilter(inEvent)) {	//on index.html, for backward android compatibility
-			this.$.modalError.close();
-		}
+		this.$.modalError.close();
 	},
 	btnBack: function(inSender, inEvent) {
-		if (checkClickFilter(inEvent)) {	//on index.html, for backward android compatibility
-			this.$.btnBack.setDisabled(true);
-			this.getEquipmentList();
-		}
+		this.$.btnBack.setDisabled(true);
+		this.getEquipmentList();
 	},
 	getListItem: function(inSender, inIndex) {
 		var r = this.results[inIndex];
@@ -193,10 +184,8 @@ enyo.kind({
 		}
 	},
 	listItemClick: function(inSender, inEvent) {
-		if (checkClickFilter(inEvent)) {	//on index.html, for backward android compatibility
-			var item = this.results[inEvent.rowIndex];
-			this.handleItemSelect(item);
-		}
+		var item = this.results[inEvent.rowIndex];
+		this.handleItemSelect(item);
 	},
 	handleItemSelect: function(item) {
 		this.$.btnBack.setDisabled(false);
