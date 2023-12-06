@@ -6,6 +6,10 @@
 	<meta http-equiv="pragma" content="no-cache">
 	<link rel="shortcut icon" href="./favicon.ico">
 	<link rel="manifest" href="./manifest.json">
+	<!-- setup app for iOS-->
+	<meta name="apple-mobile-web-app-capable" content="yes"/>
+	<meta name="theme-color" content="#000">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-title" content="SMIP App">
 	<link rel="apple-touch-startup-image" href="./icons/android-icon-192x192.png">
@@ -83,10 +87,6 @@
 </div>
 <script type="text/javascript">
 	new SmipApp().renderInto(document.body);
-	/*enyo.forEach(['touchstart', 'touchmove', 'touchend', 'gesturestart', 'gesturechange', 'gestureend'], function(e) {
-		// on iOS7 document.ongesturechange is never called
-		document.addEventListener(e, enyo.dispatch, {passive:false});
-	});*/
 </script>
 </body>
 </html>
