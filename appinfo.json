@@ -3,7 +3,7 @@
 	"version": "1.0.0",
 	"vendor": "CESMII",
 	"type": "web",
-	"main": "index.html",
+	"main": "webos.html",
 	"title": "CESMII SMIP App",
 	"icon": "icon.png",
 	"splashIcon": "icon-256.png",

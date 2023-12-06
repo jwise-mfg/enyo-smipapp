@@ -80,10 +80,10 @@
 </div>
 <script type="text/javascript">
 	new SmipApp().renderInto(document.body);
-	enyo.forEach(['touchstart', 'touchmove', 'touchend', 'gesturestart', 'gesturechange', 'gestureend'], function(e) {
+	/*enyo.forEach(['touchstart', 'touchmove', 'touchend', 'gesturestart', 'gesturechange', 'gestureend'], function(e) {
 		// on iOS7 document.ongesturechange is never called
 		document.addEventListener(e, enyo.dispatch, {passive:false});
-	});
+	});*/
 </script>
 </body>
 </html>
